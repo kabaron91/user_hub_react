@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { Header, UserPosts } from './components'
-import { getUsers, getPostsByUser } from './api'
+import { Header, UserPosts, UserTodos } from './components'
+import { getUsers, getPostsByUser, getTodosByUser } from './api'
 
 const App = () => {
     const [userList, setUserList] = useState([])
     const [currentUser, setCurrentUser] = useState(null)
     const [userPosts, setUserPosts] = useState([])
+    const [userTodos, setUserTodos] = useState([])
     useEffect(() => {
         getUsers()
             .then(users => {
@@ -21,11 +22,19 @@ const App = () => {
     useEffect(() => {
       if (!currentUser) {
         setUserPosts([])
+        setUserTodos([])
         return
       }
       getPostsByUser(currentUser.id)
         .then(posts => {
           setUserPosts(posts)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+      getTodosByUser(currentUser.id)
+        .then(todos => {
+          setUserTodos(todos)
         })
         .catch(error => {
           console.error(error)
@@ -39,9 +48,14 @@ const App = () => {
                 setCurrentUser={ setCurrentUser } />
             {
               currentUser
-              ? <UserPosts 
-                userPosts={ userPosts }
-                currentUser={ currentUser } />
+              ? <> 
+                <UserPosts 
+                  userPosts={ userPosts }
+                  currentUser={ currentUser } />
+                <UserTodos
+                  userTodos={ userTodos }
+                  currentUser={ currentUser } />
+              </>
               : null
             }
         </div>
