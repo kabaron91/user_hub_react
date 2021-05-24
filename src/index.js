@@ -1,15 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+// src/index.js
+
+import React, { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
+import { Header } from './components'
+import { getUsers } from './api'
 
 const App = () => {
-  return (
-    <div id="App">
-      <h1>Hello, World</h1>
-    </div>
-  );
+    const [userList, setUserList] = useState([])
+    useEffect(() => {
+        getUsers()
+        .then(users => {
+            setUserList(users)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    }, [])
+    return (
+        <div id="App">
+            <Header userList={ userList } />
+        </div>
+    )
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById('root'))
